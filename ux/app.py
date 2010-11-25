@@ -2,6 +2,7 @@
 """app.py - some convenience classes around urwid."""
 
 import urwid
+import layout
 
 BIND_TEXT_DEFAULT = True
 
@@ -150,8 +151,27 @@ class Form:
         self.GetParent().Show(self.GetTopWidget())
 
 class Dialog (Form):
+    def __init__ (self, parent, width, height, align='center', valign='middle', shadow=u'\u2592', top_widget=None):
+        self.width = width
+        self.height = height
+        self.align = align
+        self.valign = valign
+        self.shadow = shadow
+
+        Form.__init__(self, parent, top_widget)
+
+    def MakeShadow (self):
+        return urwid.SolidFill(self.shadow)
+
+    def MakeOverlay (self):
+        self.overlay1 = layout.OffsetOverlay(self.MakeShadow(), self.GetParent().GetCurrentWidget(), self.align, self.width, self.valign, self.height)
+        self.overlay2 = urwid.Overlay(self.GetTopWidget(), self.overlay1, self.align, self.width, self.valign, self.height)
+        return self.overlay2
+
     def ShowModal (self):
-        pass
+        assert self.GetTopWidget() is not None
+        self.GetParent().SetTopForm(self)
+        self.GetParent().Show(self.MakeOverlay())
 
 class UrwidApp:
     def __init__ (self, palette=None, screen=None):
@@ -162,7 +182,7 @@ class UrwidApp:
         """
         self.main_loop = urwid.MainLoop(None, palette, screen, handle_mouse=False, input_filter=self.input_filter, unhandled_input=self.unhandled_input)
         self._top_form = None
-        self._previous_form = []
+        self._previous_forms = []
 
         if hasattr(self, "OnInit"):
             self.OnInit()
