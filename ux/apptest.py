@@ -16,8 +16,6 @@ class TestApp (app.UrwidApp):
     def OnInit (self):
         form = PrettyForm(self)
         form.Show()
-    def unhandled_input (self, input):
-        return self.GetTopWindow().UnhandledInput(input)
 
 def main():
     palette = [
