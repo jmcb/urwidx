@@ -1,10 +1,28 @@
 #!/usr/bin/env python
 
 from _uxconf import *
-import form, app, urwid, layout
+import form, app, urwid, layout, button
 
 class Dialog (form.Form):
+    """
+
+    A modular Form designed to be displayed over the top of other forms.
+
+    """
     def __init__ (self, parent, width, height, align='center', valign='middle', shadow=u'\u2592', top_widget=None):
+        """
+
+        Initialise a dialog. Requires the same parameters as a Form, in addition:
+
+        parent: the UrwidApp parent.
+        width: the width of the dialog.
+        height: the height of the dialog.
+        align: where the dialog should be displayed horizontally.
+        valign: where the dialog should be displayed vertically.
+        shadow: the character to be used as a "drop shadow".
+        top_widget: the top widget of the form.
+
+        """
         self.width = width
         self.height = height
         self.align = align
@@ -16,19 +34,40 @@ class Dialog (form.Form):
         form.Form.__init__(self, parent, top_widget)
 
     def MakeShadow (self):
+        """
+
+        Create a box widget that is displayed as the "shadow" of the dialog.
+
+        """
+
         return urwid.SolidFill(self.shadow)
 
     def MakeOverlay (self):
+        """
+
+        Builds a series of overlays: overlay1 consists of the shadow on top of the currently displayed widget. overlay2 consists of the dialog on top of the shadow.
+
+        """
         self.overlay1 = layout.OffsetOverlay(self.MakeShadow(), self.GetParent().GetCurrentWidget(), self.align, self.width, self.valign, self.height)
         self.overlay2 = urwid.Overlay(self.GetTopWidget(), self.overlay1, self.align, self.width, self.valign, self.height)
         return self.overlay2
 
     def Show (self):
+        """
+
+        Shows the dialog on top of the currently displayed widget.
+
+        """
         assert self.GetTopWidget() is not None
         self.GetParent().SetTopForm(self)
         self.GetParent().Show(self.MakeOverlay())
 
     def GotResult (self, result):
+        """
+
+        A convenience function for parsing the "result" of a dialog. For modally displayed dialogs it merely stores the result. For non-modal dialogs, it dismisses the dialog as well as storing the result.
+
+        """
         if self.showing_modal:
             def f (*args):
                 self.result = result
@@ -39,6 +78,11 @@ class Dialog (form.Form):
         return f
 
     def ShowModal (self):
+        """
+
+        Enter into a sub-loop to display the dialog. All key inputs will be based to the relevant sub-widgets. The function will block until a "result" is gathered from the dialog (pressing a key, selecting a button, providing a relevant value, etc), at which point the result will be returned to the calling thread.
+
+        """
         self.showing_modal = True
 
         self.Show()
@@ -65,7 +109,20 @@ class Dialog (form.Form):
         return self.result
 
 class ButtonDialog (Dialog):
+    """
+
+    A sub-dialog consisting of a displayed string (passed via 'caption') and a series of buttons (as defined in _uxconf.BUTTON_LIST).
+
+    """
     def __init__ (self, parent, width, height, align='center', valign='middle', shadow=u'\u2592', caption="", **buttons):
+        """
+
+        Initiliases the ButtonDialog. Extra parameters:
+
+        caption: the text caption to be displayed.
+        **buttons: a series of keyword arguments with a boolean true value for the button in question to be displayed (or false for it not to be displayed0.
+
+        """
         self.caption_text = caption
         self.buttons = buttons
 
@@ -73,17 +130,22 @@ class ButtonDialog (Dialog):
         Dialog.__init__ (self, parent, width+2, height+2, align, valign, shadow, None)
 
     def OnInit (self):
+        """
+
+        Dynamically builds the dialog based on the supplied variables.
+
+        """
         self.caption = urwid.Text(self.caption_text)
         self.button_list = []
 
         for btype, bval in self.buttons.iteritems():
             if not bval:
                 continue
-            if not BUTTON_INFO.has_key(btype):
+            if not button.has_button(btype):
                 raise IndexError, btype
-            button = BUTTON_INFO[btype]
-            self.button_list.append(urwid.Button(label=button['label'], on_press=self.GotResult(button['result'])))
-            self.BindText(button['hotkey'], self.GotResult(button['result']))
+            btn = button.get_btn(btype)
+            self.btn_list.append(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)))
+            self.BindText(btn.hotkey, self.GotResult(btn.result))
 
         if self.button_list:
             self.columns = urwid.Columns(self.button_list, dividechars=1)
