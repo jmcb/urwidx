@@ -143,8 +143,8 @@ class ButtonDialog (Dialog):
                 continue
             if not button.has_button(btype):
                 raise IndexError, btype
-            btn = button.get_btn(btype)
-            self.btn_list.append(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)))
+            btn = button.get_button(btype)
+            self.button_list.append(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)))
             self.BindText(btn.hotkey, self.GotResult(btn.result))
 
         if self.button_list:

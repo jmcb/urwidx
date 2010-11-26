@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-# for button.py
 import collections
 
 button_type = collections.namedtuple('ButtonInfo', 'label result hotkey')
@@ -16,3 +14,12 @@ def has_button (button):
 
 def get_button (button):
     return _BUTTON_INFO[button]
+
+def add_button (button, *args, **kwargs):
+    if has_button (button):
+        raise IndexError
+    if len(args) == 3:
+        bt = button_type(*args)
+    else:
+        bt = button_type(**kwargs)
+    _BUTTON_INFO[button] = bt
