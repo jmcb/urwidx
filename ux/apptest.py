@@ -45,7 +45,7 @@ def main():
         ('test', 'black', 'dark blue'),
         ('shadow', 'dark blue', 'default'),
         ('dialog', 'black', 'dark blue'),
-        ('underline', 'light blue', 'dark blue', 'bold'),
+        ('underline', 'black,underline', 'dark blue'),
     ]
 
     app = TestApp(palette=palette)
