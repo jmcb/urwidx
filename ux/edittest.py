@@ -9,9 +9,7 @@ class EditTestForm (form.Form):
 
         self.data_list = [str(("%s " % x) * 15).strip() for x in xrange(10)]
 
-        self.frame = urwid.Frame(body=urwid.LineBox(urwid.Filler(
-        urwid.AttrMap(edit.ListEditor("This is a test:", self.data_list, 10), None)
-        )), header=header, footer=self.footer)
+        self.frame = urwid.Frame(body=urwid.LineBox(urwid.Filler(urwid.AttrMap(edit.ListEditor("This is a test:", self.data_list, 10), None))), header=header, footer=self.footer)
         self.SetTopWidget(self.frame)
 
 class EditTestApp (app.UrwidApp):
