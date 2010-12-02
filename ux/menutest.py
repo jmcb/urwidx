@@ -1,9 +1,17 @@
 #!/usr/bin/env python
 import app, form, urwid, layout, edit
 
-class MenuItem (urwid.Button):
-    button_left = urwid.Text("")
-    button_right = urwid.Text("")
+class Menu (form.Form):
+    def __init__ (self, parent, menu_list):
+        form.Form.__init__(self, parent)
+
+class MenuItem (urwid.SelectableIcon):
+    signals = ["click"]
+    def __init__(self, text, callback=None, cursor_position=0):
+        if callback:
+            urwid.connect_signal(self, "click", callback)
+
+        urwid.SelectableIcon.__init__(self, text, cursor_position)
 
 class MenuTestForm (form.Form):
     def OnInit (self):
