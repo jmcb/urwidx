@@ -2,5 +2,3 @@
 """ menu.py """
 
 import urwid
-
-

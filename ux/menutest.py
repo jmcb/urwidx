@@ -7,9 +7,11 @@ class MenuItem (urwid.Button):
 
 class MenuTestForm (form.Form):
     def OnInit (self):
-        button = MenuItem("This is a test")
+        button = urwid.AttrMap(MenuItem("This is a test"), None, "understand")
+        button2 = urwid.AttrMap(MenuItem("This is another test."), None, "understand")
+        self.pile = urwid.Pile([button, button2])
 
-        self.SetTopWidget(button)
+        self.SetTopWidget(urwid.Filler(self.pile))
 
 class MenuTestApp (app.UrwidApp):
     def OnInit (self):
