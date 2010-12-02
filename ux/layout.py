@@ -80,13 +80,14 @@ class ListEditorWalker (urwid.SimpleListWalker):
         else:
             self.contents.insert(self.focus, "")
             self.editors.append(None)
+            self.wipe_editors()
 
     def snip (self):
         del self.contents[self.focus]
         self.wipe_editors()
 
 # An interface to ListEditorWalker.
-class ListEditor (urwid.ListBox):
+class ListBoxEditor (urwid.ListBox):
     def __init__ (self, to_edit, editor=urwid.Edit, walker=ListEditorWalker, meta_key="ctrl e", del_key="-", append_key="+", insert_key="insert"):
         self.to_edit = to_edit
         self.meta_key = meta_key
@@ -98,13 +99,15 @@ class ListEditor (urwid.ListBox):
         urwid.ListBox.__init__(self, self.walker)
 
     def keypress (self, size, key):
-        if self.looking_meta and (key == self.append_key or key == self.append_key):
-            self.walker.new(key == self.append_key)
-            return
-        elif self.looking_meta and key == self.delete_key:
-            self.walker.snip()
-            return
-        else:
-            self.looking_meta = (key == self.meta_key)
+        if self.looking_meta:
+            self.looking_meta = False
+            if key == self.append_key or key == self.insert_key:
+                self.walker.new(key == self.append_key)
+                return
+            elif key == self.delete_key:
+                self.walker.snip()
+                return
+
+        self.looking_meta = (key == self.meta_key)
 
         return urwid.ListBox.keypress(self, size, key)
