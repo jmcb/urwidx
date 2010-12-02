@@ -1,8 +1,7 @@
 ******
 urwidx
 ******
-**Extended widgets and a wxPython-esque interface to `urwid
-<http://excess.org/urwid>`_.**
+**Extended widgets and a wxPython-esque interface to urwid.**
 
 For demonstrations, see *ux/\*test.py*.
 
