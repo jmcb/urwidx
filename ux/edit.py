@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """edit.py - a selection of custom editors. """
 
-import urwid
+import urwid, layout
 
 class MaskedEdit (urwid.Edit):
     def __init__ (self, caption='', edit_text='', mask_char='', multiline=False, align='left', wrap='space', allow_tab=False, edit_pos=None, layout=None):
@@ -53,4 +53,14 @@ class BoolEdit (urwid.Edit):
             self.set_value(not self.get_value())
         else:
             return key
+
+class ListEditor (layout.SizedFrame):
+    def __init__ (self, caption, edit_list, height=10, editor=urwid.Edit):
+        self.caption = urwid.Text(caption)
+        self.edit_list = edit_list
+        self.list_editor = layout.ListBoxEditor(self.edit_list)
+        self.columns = urwid.Columns([('fixed', len(caption)+1, self.caption), urwid.BoxAdapter(self.list_editor, height)])
+        self.body = urwid.Filler(self.columns)
+
+        layout.SizedFrame.__init__(self, body=self.body, height=height)
 
