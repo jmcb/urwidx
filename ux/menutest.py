@@ -9,12 +9,6 @@ men = [("Test", None),
                   ])
       ]
 
-def ParseMenu (menu):
-    menu_stuff = []
-    for caption, extra in menu:
-        if isinstance(extra, list):
-        menu_stuff.
-
 class Menu (urwid.ListBox):
     def __init__ (self, menu_list):
         menu_stuff = []
