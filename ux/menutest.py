@@ -1,25 +1,37 @@
 #!/usr/bin/env python
 import app, form, urwid, layout, edit
 
-class Menu (form.Form):
-    def __init__ (self, parent, menu_list):
-        form.Form.__init__(self, parent)
+men = [("Test", None),
+       ("Test 2", None),
+       ("Test 3", [
+                   ("Test 4", None),
+                   ("Test 5", None),
+                  ])
+      ]
 
-class MenuItem (urwid.SelectableIcon):
-    signals = ["click"]
-    def __init__(self, text, callback=None, cursor_position=0):
-        if callback:
-            urwid.connect_signal(self, "click", callback)
+def ParseMenu (menu):
+    menu_stuff = []
+    for caption, extra in menu:
+        if isinstance(extra, list):
+        menu_stuff.
 
-        urwid.SelectableIcon.__init__(self, text, cursor_position)
+class Menu (urwid.ListBox):
+    def __init__ (self, menu_list):
+        menu_stuff = []
+        for caption, extra in menu_list:
+            if isinstance(extra, list):
+                menu_stuff.append(urwid.BoxAdapter(Menu(extra), height=len(extra)))
+            else:
+                menu_stuff.append(MenuItem(caption, extra))
+        walker = urwid.SimpleListWalker(menu_stuff)
+        urwid.ListBox.__init__(self, walker)
+
 
 class MenuTestForm (form.Form):
     def OnInit (self):
-        button = urwid.AttrMap(MenuItem("This is a test"), None, "understand")
-        button2 = urwid.AttrMap(MenuItem("This is another test."), None, "understand")
-        self.pile = urwid.Pile([button, button2])
-
-        self.SetTopWidget(urwid.Filler(self.pile))
+        menu = Menu(men)
+        print menu
+        self.SetTopWidget(menu)
 
 class MenuTestApp (app.UrwidApp):
     def OnInit (self):
