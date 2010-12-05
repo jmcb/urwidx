@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import app, form, urwid, layout, edit
+import app, form, urwid, layout, edit, menu
 
 men = [("Test", None),
        ("Test 2", None),
@@ -16,10 +16,9 @@ class Menu (urwid.ListBox):
             if isinstance(extra, list):
                 menu_stuff.append(urwid.BoxAdapter(Menu(extra), height=len(extra)))
             else:
-                menu_stuff.append(MenuItem(caption, extra))
+                menu_stuff.append(menu.MenuWidget(caption, extra))
         walker = urwid.SimpleListWalker(menu_stuff)
         urwid.ListBox.__init__(self, walker)
-
 
 class MenuTestForm (form.Form):
     def OnInit (self):
