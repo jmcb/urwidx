@@ -15,7 +15,7 @@ m = menu.Menu(text=None, contents=[
 
 class Menu (urwid.ListBox):
     def __init__ (self, menu_list):
-        walker = menu.MenuWalker(menu_list)
+        walker = menu.MenuWalker(menu_list, menu.NumberedMenuWidget)
         urwid.ListBox.__init__(self, walker)
 
 class MenuTestForm (form.Form):

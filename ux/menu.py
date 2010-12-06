@@ -61,7 +61,7 @@ class SubMenu (BaseMenu, BaseMenuStructure):
 # Widgets used for representing MenuItem, Menu and SubMenu on screen.
 class MenuWidget (urwid.SelectableIcon):
     signals = ["click"]
-    def __init__(self, item, callback=None, cursor_position=0, depth=0):
+    def __init__(self, item, callback=None, cursor_position=0, depth=0, num=False, numbered=False):
         text = item
 
         if hasattr(item, "function"):
@@ -71,6 +71,9 @@ class MenuWidget (urwid.SelectableIcon):
 
         if callback:
             urwid.connect_signal(self, "click", callback)
+
+        if numbered:
+            text = "%s. %s" % (num, text)
 
         if depth > 1:
             text = " " * (depth-1) + text
@@ -82,22 +85,35 @@ class MenuWidget (urwid.SelectableIcon):
 
         self._emit('click')
 
+class NumberedMenuWidget (MenuWidget):
+    def __init__(self, item, callback=None, cursor_position=0, depth=0, num=None):
+        if num is not None:
+            numbered = True
+        else:
+            numbered = False
+
+        MenuWidget.__init__(self, item, callback, cursor_position, depth, num, numbered)
+
 # Stuff that combines MenuWidget and Menu* into something that urwid can deal with.
 class MenuWalker (urwid.SimpleListWalker):
-    def __init__(self, menu):
+    def __init__(self, menu, widget_type=MenuWidget):
         self.menu = menu
+        self.widget_type = widget_type
 
         urwid.SimpleListWalker.__init__(self, self._parse_menu(self.menu))
 
     def _parse_menu (self, menu, menu_depth=0):
         menu_depth = menu_depth + 1
 
+        current = 0
+
         menu_list = []
         for item in menu.contents:
+            current = current + 1
             if item.is_menu_item():
-                menu_list.append(MenuWidget(item, depth=menu_depth))
+                menu_list.append(self.widget_type(item, depth=menu_depth, num=current))
             elif item.is_submenu():
-                widget = MenuWidget(item, depth=menu_depth)
+                widget = self.widget_type(item, depth=menu_depth, num=current)
                 urwid.connect_signal(widget, "click", self._expand_fn(item))
                 menu_list.append(widget)
                 if item.is_expanded():
