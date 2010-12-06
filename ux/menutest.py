@@ -1,29 +1,26 @@
 #!/usr/bin/env python
 import app, form, urwid, layout, edit, menu
 
-men = [("Test", None),
-       ("Test 2", None),
-       ("Test 3", [
-                   ("Test 4", None),
-                   ("Test 5", None),
-                  ])
-      ]
+def q (*a):
+    raise urwid.ExitMainLoop()
+
+m = menu.Menu(text=None, contents=[
+        menu.MenuItem(text="Exit", function=q),
+        menu.MenuItem(text="Test 1"),
+        menu.MenuItem(text="Test 2"),
+        menu.SubMenu(text="Sub-menu test", contents=[
+            menu.MenuItem(text=" Sub-test 1"),
+            menu.MenuItem(text=" Sub-test 2")]),
+        ])
 
 class Menu (urwid.ListBox):
     def __init__ (self, menu_list):
-        menu_stuff = []
-        for caption, extra in menu_list:
-            if isinstance(extra, list):
-                menu_stuff.append(urwid.BoxAdapter(Menu(extra), height=len(extra)))
-            else:
-                menu_stuff.append(menu.MenuWidget(caption, extra))
-        walker = urwid.SimpleListWalker(menu_stuff)
+        walker = menu.MenuWalker(menu_list)
         urwid.ListBox.__init__(self, walker)
 
 class MenuTestForm (form.Form):
     def OnInit (self):
-        menu = Menu(men)
-        print menu
+        menu = Menu(m)
         self.SetTopWidget(menu)
 
 class MenuTestApp (app.UrwidApp):

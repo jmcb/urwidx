@@ -19,23 +19,44 @@ class BaseMenuStructure:
     def is_expandable (self):
         return hasattr(self, 'expandable') and self.expandable
 
-class MenuItem (collections.namedtuple("MenuItem", "text function hotkey"), BaseMenuStructure):
-    def __new__ (_cls, text, function=None, hotkey=None):
+class MenuItem (BaseMenuStructure):
+    text = None
+    function = None
+    hotkey = None
+    def __init__ (self, text, function=None, hotkey=None):
         if text is None:
             raise ValueError, "MenuItem text cannot be None."
-        return BaseMenuItem.__new__(_cls, text, function, hotkey)
 
-class Menu (collections.namedtuple("Menu", "text contents function hotkey expanded expandable"), BaseMenuStructure):
-    def __new__(_cls, text, contents, function=None, hotkey=None, expanded=True, expandable=False):
+        self.text = text
+        self.function = function
+        self.hotkey = hotkey
+
+class BaseMenu:
+    text = None
+    contents = None
+    function = None
+    hotkey = None
+    expanded = None
+    expandable = None
+    def __init__ (self, text, contents, function, hotkey, expanded, expandable):
+        self.text = text
+        self.contents = contents
+        self.function = function
+        self.hotkey = hotkey
+        self.expanded = expanded
+        self.expandable = expandable
+
+class Menu (BaseMenu, BaseMenuStructure):
+    def __init__(self, text, contents, function=None, hotkey=None, expanded=True, expandable=False):
         if contents is None:
             raise ValueError, "Menu contents cannot be None."
-        return BaseMenu.__new__(_cls, text, contents, function, hotkey, expanded, expandable)
+        return BaseMenu.__init__(self, text, contents, function, hotkey, expanded, expandable)
 
-class SubMenu (collections.namedtuple("Menu", "text contents function hotkey expanded expandable"), BaseMenuStructure):
-    def __new__(_cls, text, contents, function=None, hotkey=None, expanded=False, expandable=True):
+class SubMenu (BaseMenu, BaseMenuStructure):
+    def __init__(self, text, contents, function=None, hotkey=None, expanded=False, expandable=True):
         if contents is None:
             raise ValueError, "SubMenu contents cannot be None."
-        return BaseMenu.__new__(_cls, text, contents, function, hotkey, expanded, expandable)
+        return BaseMenu.__init__(self, text, contents, function, hotkey, expanded, expandable)
 
 # Widgets used for representing MenuItem, Menu and SubMenu on screen.
 class MenuWidget (urwid.SelectableIcon):
@@ -44,7 +65,7 @@ class MenuWidget (urwid.SelectableIcon):
         text = item
 
         if hasattr(item, "function"):
-            if not callback:
+            if callback == None:
                 callback = item.function
             text = item.text
 
@@ -52,16 +73,39 @@ class MenuWidget (urwid.SelectableIcon):
             urwid.connect_signal(self, "click", callback)
 
         urwid.SelectableIcon.__init__(self, text, cursor_position)
+    def keypress(self, size, key):
+        if urwid.command_map[key] != 'activate':
+            return key
+
+        self._emit('click')
 
 # Stuff that combines MenuWidget and Menu* into something that urwid can deal with.
 class MenuWalker (urwid.SimpleListWalker):
     def __init__(self, menu):
         self.menu = menu
 
-        urwid.SimpleListWalker.__init__(self, self.menu_as_list())
+        urwid.SimpleListWalker.__init__(self, self._parse_menu(self.menu))
 
-    def menu_as_list (self):
+    def _parse_menu (self, menu):
         menu_list = []
+        for item in menu.contents:
+            if item.is_menu_item():
+                menu_list.append(MenuWidget(item))
+            elif item.is_submenu():
+                widget = MenuWidget(item)
+                urwid.connect_signal(widget, "click", self._expand_fn(item))
+                menu_list.append(widget)
+                if item.is_expanded():
+                    menu_list.extend(self._parse_menu(item))
+        return menu_list
+
+    def _expand_fn (self, item):
+        def _expander (*args, **kwargs):
+            item.expanded = not item.expanded
+            if item.function:
+                item.function(*args, **kwargs)
+            self.update_menu()
+        return _expander
 
     def update_menu (self):
-        self.contents[:] = self.menu_as_list()
+        self.contents[:] = self._parse_menu(self.menu)
