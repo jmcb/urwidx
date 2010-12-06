@@ -61,7 +61,7 @@ class SubMenu (BaseMenu, BaseMenuStructure):
 # Widgets used for representing MenuItem, Menu and SubMenu on screen.
 class MenuWidget (urwid.SelectableIcon):
     signals = ["click"]
-    def __init__(self, item, callback=None, cursor_position=0):
+    def __init__(self, item, callback=None, cursor_position=0, depth=0):
         text = item
 
         if hasattr(item, "function"):
@@ -71,6 +71,9 @@ class MenuWidget (urwid.SelectableIcon):
 
         if callback:
             urwid.connect_signal(self, "click", callback)
+
+        if depth > 1:
+            text = " " * (depth-1) + text
 
         urwid.SelectableIcon.__init__(self, text, cursor_position)
     def keypress(self, size, key):
@@ -86,17 +89,19 @@ class MenuWalker (urwid.SimpleListWalker):
 
         urwid.SimpleListWalker.__init__(self, self._parse_menu(self.menu))
 
-    def _parse_menu (self, menu):
+    def _parse_menu (self, menu, menu_depth=0):
+        menu_depth = menu_depth + 1
+
         menu_list = []
         for item in menu.contents:
             if item.is_menu_item():
-                menu_list.append(MenuWidget(item))
+                menu_list.append(MenuWidget(item, depth=menu_depth))
             elif item.is_submenu():
-                widget = MenuWidget(item)
+                widget = MenuWidget(item, depth=menu_depth)
                 urwid.connect_signal(widget, "click", self._expand_fn(item))
                 menu_list.append(widget)
                 if item.is_expanded():
-                    menu_list.extend(self._parse_menu(item))
+                    menu_list.extend(self._parse_menu(item, menu_depth))
         return menu_list
 
     def _expand_fn (self, item):

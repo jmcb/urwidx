@@ -7,10 +7,10 @@ def q (*a):
 m = menu.Menu(text=None, contents=[
         menu.MenuItem(text="Exit", function=q),
         menu.MenuItem(text="Test 1"),
-        menu.MenuItem(text="Test 2"),
         menu.SubMenu(text="Sub-menu test", contents=[
-            menu.MenuItem(text=" Sub-test 1"),
-            menu.MenuItem(text=" Sub-test 2")]),
+            menu.MenuItem(text="Sub-test 1"),
+            menu.MenuItem(text="Sub-test 2")]),
+        menu.MenuItem(text="Test 2")
         ])
 
 class Menu (urwid.ListBox):
