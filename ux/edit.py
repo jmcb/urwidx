@@ -20,10 +20,10 @@ class MaskedEdit (urwid.Edit):
 
         return rv
 
-def PasswordEdit (MaskedEdit):
+class PasswordEdit (MaskedEdit):
     def __init__ (self, *args, **kwargs):
         self.mask_char = "*"
-        urwid.Edit.__init__(self, *args, **kwargs)
+        MaskedEdit.__init__(self, *args, **kwargs)
 
 class BoolEdit (urwid.Edit):
     def __init__ (self, caption='', initially=True, align='left', true_value="X", false_value="-"):
