@@ -4,7 +4,8 @@
 import urwid, layout
 
 class MaskedEdit (urwid.Edit):
-    def __init__ (self, caption='', edit_text='', mask_char='', multiline=False, align='left', wrap='space', allow_tab=False, edit_pos=None, layout=None):
+    def __init__ (self, caption='', edit_text='', mask_char=' ', multiline=False, align='left', wrap='space', allow_tab=False, edit_pos=None, layout=None):
+        assert len(mask_char) == 1
         self.mask_char = mask_char
 
         urwid.Edit.__init__(self, caption, edit_text, multiline, align, wrap, allow_tab, edit_pos, layout)
@@ -22,7 +23,7 @@ class MaskedEdit (urwid.Edit):
 
 class PasswordEdit (MaskedEdit):
     def __init__ (self, *args, **kwargs):
-        self.mask_char = "*"
+        kwargs["mask_char"] = "*"
         MaskedEdit.__init__(self, *args, **kwargs)
 
 class BoolEdit (urwid.Edit):
