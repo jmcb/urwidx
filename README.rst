@@ -24,11 +24,25 @@ existing urwid application as-is.
 Installation and usage
 ======================
 
+From source
+-----------
+
 Run::
 
-    python setup.py install
+    git clone git://github.com/jmcb/urwidx
+    cd urwidx
+    $ python setup.py install
 
-You can then access urwidx through the Python interpreter::
+Using pip
+---------
+
+If you have *pip* installed, you can combine the above steps into the following::
+
+    $ pip install git+git://github.com/jmcb/urwidx
+
+
+Regardless of installation choice, you can access urwidx through the Python
+interpreter::
 
     import ux
 
