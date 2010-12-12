@@ -12,6 +12,8 @@ class OffsetOverlay(urwid.Overlay):
 class SizedFrame (urwid.BoxAdapter):
     def __init__ (self, height, body, header=None, footer=None, focus_part='body'):
         urwid.BoxAdapter.__init__(self, urwid.Frame(body, header, footer, focus_part), height)
+    def get_cursor_coords (self, size):
+        return self.render(size, focus=True).cursor
 
 # Walker that interfaces on a list of string values, providing editors for them.
 # Support in-place editing by setting in_place=True.
