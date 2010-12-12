@@ -55,12 +55,16 @@ class BoolEdit (urwid.Edit):
         else:
             return key
 
+class ListBoxAdapter (urwid.BoxAdapter):
+    def get_cursor_coords (self, size):
+        return self.render(size, focus=True).cursor
+
 class ListEditor (layout.SizedFrame):
     def __init__ (self, caption, edit_list, height=10, editor=urwid.Edit):
         self.caption = urwid.Text(caption)
         self.edit_list = edit_list
         self.list_editor = layout.ListBoxEditor(self.edit_list)
-        self.columns = urwid.Columns([('fixed', len(caption)+1, self.caption), urwid.BoxAdapter(self.list_editor, height)])
+        self.columns = urwid.Columns([('fixed', len(caption)+1, self.caption), ListBoxAdapter(self.list_editor, height)])
         self.body = urwid.Filler(self.columns)
 
         layout.SizedFrame.__init__(self, body=self.body, height=height)
