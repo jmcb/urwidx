@@ -79,13 +79,16 @@ class MenuWidget (urwid.SelectableIcon):
             text = " " * (depth-1) + text
 
         urwid.SelectableIcon.__init__(self, text, cursor_position)
+
+    # Following functionality duplicated from urwid's Buttons.
+    # see urwid/wimp.py.
     def keypress(self, size, key):
         if urwid.command_map[key] != 'activate':
             return key
 
         self._emit('click')
 
-    def mouse_evnet (self, size, event, button, x, y, focus):
+    def mouse_event (self, size, event, button, x, y, focus):
         if button != 1 or not is_mouse_press(event):
             return False
 
