@@ -89,7 +89,7 @@ class MenuWidget (urwid.SelectableIcon):
         self._emit('click')
 
     def mouse_event (self, size, event, button, x, y, focus):
-        if button != 1 or not is_mouse_press(event):
+        if button != 1 or not urwid.is_mouse_press(event):
             return False
 
         self._emit('click')
