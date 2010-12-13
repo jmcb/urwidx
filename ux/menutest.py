@@ -32,7 +32,7 @@ def main ():
     palette = [('stand', 'black', 'dark blue'),
                ('understand', 'black', 'dark green')]
 
-    app = MenuTestApp(palette=palette)
+    app = MenuTestApp(palette=palette, handle_mouse=True)
     app.MainLoop()
 
 if __name__=="__main__":

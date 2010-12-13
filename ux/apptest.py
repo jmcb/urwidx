@@ -48,12 +48,17 @@ def main():
         ('underline', 'black,underline', 'dark blue'),
     ]
 
-    app = TestApp(palette=palette)
+    app = TestApp(palette=palette, handle_mouse=True)
 
     try:
         app.MainLoop()
     except KeyboardInterrupt:
         pass
+    except AttributeError, e:
+        if "'mouse_event'" in e.message:
+            app.MainLoop()
+        else:
+            raise e
 
 if __name__=="__main__":
     main()
