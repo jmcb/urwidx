@@ -6,13 +6,13 @@ import layout
 import loop
 
 class UrwidApp:
-    def __init__ (self, palette=None, screen=None, my_loop=loop.CanvasLoop):
+    def __init__ (self, palette=None, screen=None, my_loop=loop.CanvasLoop, handle_mouse=False):
         """
 
         Initialise the UrwidApplication, setting up a main loop, a form queue, and  then calling the OnInit function.
 
         """
-        self.main_loop = my_loop(None, palette, screen, handle_mouse=False, input_filter=self.input_filter, unhandled_input=self.unhandled_input)
+        self.main_loop = my_loop(None, palette, screen, handle_mouse=handle_mouse, input_filter=self.input_filter, unhandled_input=self.unhandled_input)
         self._top_form = None
         self._previous_forms = []
 
