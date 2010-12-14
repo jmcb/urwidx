@@ -8,7 +8,8 @@ class PrettyForm (form.Form):
         self.SetTopWidget(self.fill)
         self.BindText(['q', 'Q', 'enter'], self.Quit)
         self.BindText(['d', 'D'], self.ShowDialog)
-        def caller (*args):
+        self.BindText(['O', 'o'], lambda *a: self.GetParent().UncallEvery("char_caller"))
+        def char_caller (*args):
             char = ""
             while True:
                 char = chr(random.randint(1, 255))
@@ -17,7 +18,7 @@ class PrettyForm (form.Form):
             self.fill = urwid.SolidFill(char)
             self.SetTopWidget(self.fill)
             self.Show()
-        self.GetParent().CallEvery(caller, 1)
+        self.GetParent().CallEvery(char_caller, 1)
 
     def ShowDialog (self, *a):
         dialog = PrettyDialog(self.GetParent(), 20, 5)

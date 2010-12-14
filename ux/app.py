@@ -15,15 +15,24 @@ class UrwidApp:
         self.main_loop = my_loop(None, palette, screen, handle_mouse=handle_mouse, input_filter=self.input_filter, unhandled_input=self.unhandled_input)
         self._top_form = None
         self._previous_forms = []
+        self._callbacks = {}
 
         if hasattr(self, "OnInit"):
             self.OnInit()
 
     def CallEvery (self, function, call_every, user_data=None):
         def wrapper (mainloop, user_data):
-            self.main_loop.set_alarm_in(call_every, wrapper, user_data)
+            self._callbacks[function.__name__] = self.main_loop.set_alarm_in(call_every, wrapper, user_data)
             function(mainloop, user_data)
-        self.main_loop.set_alarm_in(call_every, wrapper, user_data)
+        self._callbacks[function.__name__] = self.main_loop.set_alarm_in(call_every, wrapper, user_data)
+
+    def UncallEvery (self, function):
+        try:
+            self.main_loop.remove_alarm(self._callbacks[function])
+        except IndexError:
+            return False
+        else:
+            return True
 
     def input_filter (self, input, raw):
         return self.GetTopForm().FilterInput(input, raw)
