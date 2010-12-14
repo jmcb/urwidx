@@ -19,6 +19,12 @@ class UrwidApp:
         if hasattr(self, "OnInit"):
             self.OnInit()
 
+    def CallEvery (self, function, call_every, user_data=None):
+        def wrapper (mainloop, user_data):
+            self.main_loop.set_alarm_in(call_every, wrapper, user_data)
+            function(mainloop, user_data)
+        self.main_loop.set_alarm_in(call_every, wrapper, user_data)
+
     def input_filter (self, input, raw):
         return self.GetTopForm().FilterInput(input, raw)
 

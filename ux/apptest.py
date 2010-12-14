@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import app, urwid, weakref, dialog, form
+import random, string
 
 class PrettyForm (form.Form):
     def OnInit (self):
@@ -7,6 +8,16 @@ class PrettyForm (form.Form):
         self.SetTopWidget(self.fill)
         self.BindText(['q', 'Q', 'enter'], self.Quit)
         self.BindText(['d', 'D'], self.ShowDialog)
+        def caller (*args):
+            char = ""
+            while True:
+                char = chr(random.randint(1, 255))
+                if char in string.ascii_letters:
+                    break
+            self.fill = urwid.SolidFill(char)
+            self.SetTopWidget(self.fill)
+            self.Show()
+        self.GetParent().CallEvery(caller, 1)
 
     def ShowDialog (self, *a):
         dialog = PrettyDialog(self.GetParent(), 20, 5)
