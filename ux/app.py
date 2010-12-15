@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 """app.py - some convenience classes around urwid."""
 
 import urwid
@@ -81,8 +81,8 @@ class UrwidApp:
         assert self.GetTopForm() is not None
 
         self.SetCurrentWidget(widget)
-        if hasattr(widget, "OnShow"):
-            widget.OnShow()
+        if hasattr(self.GetTopForm(), "OnShow"):
+            self.GetTopForm().OnShow()
         try:
             self.main_loop.draw_screen()
         except AssertionError:
