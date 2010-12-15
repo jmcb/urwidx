@@ -154,3 +154,30 @@ class Form:
 
         """
         self.GetParent().ShowPreviousForm()
+
+class FrameFormError (Exception): pass
+
+class FrameForm (Form):
+    frame = None
+
+    def __init__ (self, parent, top_widget=None, focus_part='body'):
+        self.frame = urwid.Frame(body=None, header=None, footer=None, focus_part=focus_part)
+
+        Form.__init__(self, parent, self.frame)
+
+    def __setattr__ (self, attr, value):
+        if attr == "body":
+            self.frame.set_body(value)
+        elif attr == "header":
+            self.frame.set_header(value)
+        elif attr == "footer":
+            self.frame.set_footer(value)
+        elif attr == "frame" and self.frame is not None:
+            raise FrameFormError, "Cannot overwrite protected property 'frame'."
+        else:
+            self.__dict__[attr] = value
+
+    body = property(lambda self: self.frame.get_body().base_widget)
+    header = property(lambda self: self.frame.get_header().base_widget)
+    footer = property(lambda self: self.frame.get_footer().base_widget)
+    set_focus = property(lambda self: self.set_focus)
