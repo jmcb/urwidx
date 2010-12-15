@@ -155,6 +155,22 @@ class Form:
         """
         self.GetParent().ShowPreviousForm()
 
+    def OnHide (self):
+        """
+
+        A hook that is called whenever this form is hidden.
+
+        """
+        pass
+
+    def OnShow (self):
+        """
+
+        A hook that is called whenever this form is shown.
+
+        """
+        pass
+
 class FrameFormError (Exception): pass
 
 class FrameForm (Form):

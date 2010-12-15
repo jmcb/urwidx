@@ -65,6 +65,10 @@ class UrwidApp:
         except IndexError:
             return False
 
+        current_form = self.GetTopForm()
+        if current_form is not None and hasattr(current_form, "OnHide"):
+            current_form.OnHide()
+
         self.SetTopForm(new_form, not discard_current)
         new_form.Show()
 
@@ -77,6 +81,8 @@ class UrwidApp:
         assert self.GetTopForm() is not None
 
         self.SetCurrentWidget(widget)
+        if hasattr(widget, "OnShow"):
+            widget.OnShow()
         try:
             self.main_loop.draw_screen()
         except AssertionError:
