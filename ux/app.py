@@ -69,8 +69,7 @@ class UrwidApp:
         if current_form is not None and hasattr(current_form, "OnHide"):
             current_form.OnHide()
 
-        self.SetTopForm(new_form, not discard_current)
-        new_form.Show()
+        new_form.Show(discard_current)
 
     def Show (self, widget):
         """

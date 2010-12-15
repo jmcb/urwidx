@@ -137,14 +137,14 @@ class Form:
         """
         return self._top_widget
 
-    def Show (self):
+    def Show (self, discard_current=True):
         """
 
         Displays the Form, pushing it to the front of the "Form" queue in the parent application, and displaying the current top widget.
 
         """
         assert self.GetTopWidget() is not None
-        self.GetParent().SetTopForm(self)
+        self.GetParent().SetTopForm(self, not discard_current)
         self.GetParent().Show(self.GetTopWidget())
 
     def ShowPrevious (self, *args):
