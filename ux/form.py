@@ -137,7 +137,7 @@ class Form:
         """
         return self._top_widget
 
-    def Show (self, discard_current=True):
+    def Show (self, discard_current=False):
         """
 
         Displays the Form, pushing it to the front of the "Form" queue in the parent application, and displaying the current top widget.
