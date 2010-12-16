@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from _uxconf import *
 import form, app, urwid, layout, button
 
 class Dialog (form.Form):

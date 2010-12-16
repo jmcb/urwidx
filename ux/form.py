@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-
-from _uxconf import *
 import form, app, urwid
+
+BIND_TEXT_DEFAULT = True
 
 class Form:
     """
