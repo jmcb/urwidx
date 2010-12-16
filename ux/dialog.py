@@ -104,7 +104,6 @@ class Dialog (form.Form):
             if 'window resize' in keys:
                 parent.screen_size = None
 
-        self.GetParent().ShowPreviousForm()
         self.showing_modal = False
         return self.result
 
