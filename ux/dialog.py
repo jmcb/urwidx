@@ -52,14 +52,14 @@ class Dialog (form.Form):
         self.overlay2 = urwid.Overlay(self.GetTopWidget(), self.overlay1, self.align, self.width, self.valign, self.height)
         return self.overlay2
 
-    def Show (self):
+    def Show (self, discard_current=False):
         """
 
         Shows the dialog on top of the currently displayed widget.
 
         """
         assert self.GetTopWidget() is not None
-        self.GetParent().SetTopForm(self)
+        self.GetParent().SetTopForm(self, not discard_current)
         self.GetParent().Show(self.MakeOverlay())
 
     def GotResult (self, result):
