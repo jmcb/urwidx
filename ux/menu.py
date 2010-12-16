@@ -47,25 +47,29 @@ class BaseMenu:
     hotkey = None
     expanded = None
     expandable = None
-    def __init__ (self, text, contents, function, hotkey, expanded, expandable):
+    main_attr = None
+    focus_attr = None
+    def __init__ (self, text, contents, function, hotkey, expanded, expandable, main_attr, focus_attr):
         self.text = text
         self.contents = contents
         self.function = function
         self.hotkey = hotkey
         self.expanded = expanded
         self.expandable = expandable
+        self.main_attr = main_attr
+        self.focus_attr = focus_attr
 
 class Menu (BaseMenu, BaseMenuStructure):
-    def __init__(self, text, contents, function=None, hotkey=None, expanded=True, expandable=False):
+    def __init__(self, text, contents, function=None, hotkey=None, expanded=True, expandable=False, main_attr=None, focus_attr=None):
         if contents is None:
             raise ValueError, "Menu contents cannot be None."
-        return BaseMenu.__init__(self, text, contents, function, hotkey, expanded, expandable)
+        return BaseMenu.__init__(self, text, contents, function, hotkey, expanded, expandable, main_attr, focus_attr)
 
 class SubMenu (BaseMenu, BaseMenuStructure):
-    def __init__(self, text, contents, function=None, hotkey=None, expanded=False, expandable=True):
+    def __init__(self, text, contents, function=None, hotkey=None, expanded=False, expandable=True, main_attr=None, focus_attr=None):
         if contents is None:
             raise ValueError, "SubMenu contents cannot be None."
-        return BaseMenu.__init__(self, text, contents, function, hotkey, expanded, expandable)
+        return BaseMenu.__init__(self, text, contents, function, hotkey, expanded, expandable, main_attr, focus_attr)
 
 # Widgets used for representing MenuItem, Menu and SubMenu on screen.
 class MenuWidget (urwid.SelectableIcon):
@@ -129,16 +133,16 @@ class MenuWalker (urwid.SimpleListWalker):
         menu_list = []
         for item in menu.contents:
             if item.is_divider():
-                menu_list.append(urwid.Divider())
+                menu_list.append(urwid.AttrMap(urwid.Divider(), self.menu.main_attr, self.menu.focus_attr))
                 continue
 
             current = current + 1
             if item.is_menu_item():
-                menu_list.append(self.widget_type(item, depth=menu_depth, num=current))
+                menu_list.append(urwid.AttrMap(self.widget_type(item, depth=menu_depth, num=current), self.menu.main_attr, self.menu.focus_attr))
             elif item.is_submenu():
                 widget = self.widget_type(item, depth=menu_depth, num=current)
                 urwid.connect_signal(widget, "click", self._expand_fn(item))
-                menu_list.append(widget)
+                menu_list.append(urwid.AttrMap(widget, self.menu.main_attr, self.menu.focus_attr))
                 if item.is_expanded():
                     menu_list.extend(self._parse_menu(item, menu_depth))
         return menu_list

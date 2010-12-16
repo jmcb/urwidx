@@ -13,7 +13,7 @@ m = menu.Menu(text=None, contents=[
             menu.MenuItem(text="Sub-test 1"),
             menu.MenuItem(text="Sub-test 2")]),
         menu.MenuItem(text="Test 2")
-        ])
+        ], focus_attr='stand', main_attr='understand')
 
 class Menu (urwid.ListBox):
     def __init__ (self, menu_list):
