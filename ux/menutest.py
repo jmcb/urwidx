@@ -5,7 +5,9 @@ def q (*a):
     raise urwid.ExitMainLoop()
 
 m = menu.Menu(text=None, contents=[
+        menu.MenuDivider(),
         menu.MenuItem(text="Exit", function=q),
+        menu.MenuDivider(),
         menu.MenuItem(text="Test 1"),
         menu.SubMenu(text="Sub-menu test", contents=[
             menu.MenuItem(text="Sub-test 1"),

@@ -5,8 +5,10 @@ import urwid, collections
 
 # Flat structures for Menus.
 class BaseMenuStructure:
+    def is_divider (self):
+        return self.text == "---"
     def is_menu_item (self):
-        return isinstance(self, MenuItem)
+        return isinstance(self, MenuItem) and not self.is_divider()
     def is_menu (self):
         return isinstance(self, Menu)
     def is_submenu (self):
@@ -30,6 +32,13 @@ class MenuItem (BaseMenuStructure):
         self.text = text
         self.function = function
         self.hotkey = hotkey
+
+class MenuDivider (MenuItem):
+    text = "---"
+    function = None
+    hotkey = None
+    def __init__ (self):
+        pass
 
 class BaseMenu:
     text = None
@@ -119,6 +128,10 @@ class MenuWalker (urwid.SimpleListWalker):
 
         menu_list = []
         for item in menu.contents:
+            if item.is_divider():
+                menu_list.append(urwid.Divider())
+                continue
+
             current = current + 1
             if item.is_menu_item():
                 menu_list.append(self.widget_type(item, depth=menu_depth, num=current))
