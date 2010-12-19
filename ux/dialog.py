@@ -145,11 +145,13 @@ class ButtonDialog (Dialog):
             if not button.has_button(btype):
                 raise IndexError, btype
             btn = button.get_button(btype)
-            widget = urwid.Padding(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)), 'center', len(btn.label)+4)
-            self.button_list.append(widget)
+            widget = urwid.Button(label=btn.label, on_press=self.GotResult(btn.result))
+            caption = widget.get_label()
+            wrapped_widget = urwid.Padding(widget, 'center', len(caption)+4)
+            self.button_list.append(wrapped_widget)
             self.BindText(btn.hotkey, self.GotResult(btn.result))
-            if widget.base_widget.get_label().lower() == self.focus.lower():
-                focus_column = self.button_list.index(widget)
+            if caption.lower() == self.focus.lower():
+                focus_column = self.button_list.index(wrapped_widget)
 
         if focus_column == 0:
             focus_column = None
