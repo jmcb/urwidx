@@ -112,7 +112,7 @@ class ButtonDialog (Dialog):
     A sub-dialog consisting of a displayed string (passed via 'caption') and a series of buttons (as defined in _uxconf.BUTTON_LIST).
 
     """
-    def __init__ (self, parent, width, height, align='center', valign='middle', shadow=u'\u2592', caption="", **buttons):
+    def __init__ (self, parent, width, height, align='center', valign='middle', shadow=u'\u2592', caption="", focus="", **buttons):
         """
 
         Initiliases the ButtonDialog. Extra parameters:
@@ -123,6 +123,7 @@ class ButtonDialog (Dialog):
         """
         self.caption_text = caption
         self.buttons = buttons
+        self.focus = focus
 
         # NB: Width and height increased by two to compensate for LineBox.
         Dialog.__init__ (self, parent, width+2, height+2, align, valign, shadow, None)
@@ -136,17 +137,22 @@ class ButtonDialog (Dialog):
         self.caption = urwid.Text(self.caption_text)
         self.button_list = []
 
+        focus_column = None
+
         for btype, bval in self.buttons.iteritems():
             if not bval:
                 continue
             if not button.has_button(btype):
                 raise IndexError, btype
             btn = button.get_button(btype)
-            self.button_list.append(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)))
+            widget = urwid.Padding(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)), len(btn.label)+4)
+            self.button_list.append(widget)
             self.BindText(btn.hotkey, self.GotResult(btn.result))
+            if btn.label == focus:
+                focus_column = self.button_list.index(widget)
 
         if self.button_list:
-            self.columns = urwid.Columns(self.button_list, dividechars=1)
+            self.columns = urwid.Columns(self.button_list, dividechars=1, focus_column=focus_column)
 
             self.pile = urwid.Pile([('fixed', self.height-3, urwid.Filler(self.caption, 'top')), self.columns])
 
