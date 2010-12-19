@@ -59,6 +59,14 @@ class UrwidApp:
     def GetTopForm (self):
         return self._top_form
 
+    def GetPreviousForm (self):
+        try:
+            form = self._pervious_forms[-1]
+        except IndexError:
+            return False
+        else:
+            return Form
+
     def ShowPreviousForm (self, discard_current=True):
         try:
             new_form = self._previous_forms.pop()
