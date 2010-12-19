@@ -65,7 +65,7 @@ class UrwidApp:
         except IndexError:
             return False
         else:
-            return Form
+            return form
 
     def ShowPreviousForm (self, discard_current=True):
         try:
