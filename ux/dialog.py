@@ -148,7 +148,7 @@ class ButtonDialog (Dialog):
             widget = urwid.Padding(urwid.Button(label=btn.label, on_press=self.GotResult(btn.result)), 'center', len(btn.label)+4)
             self.button_list.append(widget)
             self.BindText(btn.hotkey, self.GotResult(btn.result))
-            if widget.get_label().lower() == focus.lower():
+            if widget.base_widget.get_label().lower() == self.focus.lower():
                 focus_column = self.button_list.index(widget)
 
         if focus_column == 0:
