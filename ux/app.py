@@ -61,7 +61,7 @@ class UrwidApp:
 
     def GetPreviousForm (self):
         try:
-            form = self._pervious_forms[-1]
+            form = self._previous_forms[-1]
         except IndexError:
             return False
         else:
